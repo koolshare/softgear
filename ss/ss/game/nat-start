@@ -1,0 +1,144 @@
+#!/bin/sh
+eval `dbus export ss`
+black=$(echo $ss_basic_black_lan | sed "s/,/\n/g")
+white=$(echo $ss_basic_white_lan | sed "s/,/\n/g")
+lan_ipaddr=$(nvram get lan_ipaddr)
+wanwhitelist=$(echo $ss_redchn_wan_white_ip | sed 's/,/\n/g')
+wanblacklist=$(echo $ss_redchn_wan_black_ip | sed "s/,/\n/g")
+wanblackdomain=$(echo $ss_redchn_wan_white_domain | sed 's/,/\n/g')
+wanwhitedomain=$(echo $ss_redchn_wan_black_domain | sed "s/,/\n/g")
+use_chnroute="/koolshare/ss/redchn/chnroute.txt"
+server_ip=`resolvip $ss_basic_server`
+ip1=$(nvram get wan_ipaddr | cut -d"." -f1)
+ip2=$(nvram get wan_ipaddr | cut -d"." -f2)
+MODULES="nf_tproxy_core xt_TPROXY xt_socket"
+OS=$(uname -r)
+
+# Different routers got different iptables syntax
+case $(uname -m) in
+  armv7l)
+    MATCH_SET='--match-set'
+    ;;
+  mips)
+    MATCH_SET='--set'
+    ;;
+esac
+
+# load Kernel Modules
+echo $(date): load TPROXY modules...
+checkmoduleisloaded(){
+	if lsmod | grep $MODULE > /dev/null; then
+	       	return 0; 
+	else 
+		return 1; 
+	fi;
+}
+
+for MODULE in $MODULES; do
+	if ! checkmoduleisloaded; then
+		insmod /lib/modules/${OS}/kernel/net/netfilter/${MODULE}.ko
+	fi
+done
+
+modules_loaded=0
+
+for MODULE in $MODULES; do
+	if checkmoduleisloaded; then
+		modules_loaded=$(( i++ )); 
+	fi
+done
+
+if [ $modules_loaded -ne 2 ]; then
+	echo "One or more modules are missing, only $(( modules_loaded+1 )) are loaded. Can't start.";
+	exit 1;
+fi
+echo $(date): done
+echo $(date): 
+
+iptables -t mangle -D PREROUTING -p tcp -j SHADOWSOCKS2 >/dev/null 2>&1
+iptables -t mangle -D PREROUTING -p udp -j SHADOWSOCKS2 >/dev/null 2>&1
+iptables -t mangle -F SHADOWSOCKS2 >/dev/null 2>&1
+iptables -t mangle -X SHADOWSOCKS2 >/dev/null 2>&1
+
+ipset -F router >/dev/null 2>&1
+ipset -F gfwlist >/dev/null 2>&1
+ipset -F white_domain >/dev/null 2>&1
+ipset -X router >/dev/null 2>&1
+ipset -X gfwlist >/dev/null 2>&1
+ipset -X white_domain >/dev/null 2>&1
+
+# create ip rules
+ip rule add fwmark 1 lookup 100
+ip route add local 0.0.0.0/0 dev lo table 100
+
+# creat ipset rules
+sed -e "s/^/-A chnroute &/g" -e "1 i\-N chnroute nethash --hashsize 81920" $use_chnroute | awk '{print $0} END{print "COMMIT"}' | ipset -R
+ipset -N router iphash
+ipset -N white_domain iphash
+ipset -N black_domain iphash
+
+# creat mangle chain
+iptables -t mangle -N SHADOWSOCKS2
+
+# return these ip
+iptables -t mangle -A SHADOWSOCKS2 -d 0.0.0.0/8 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 10.0.0.0/8 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 127.0.0.0/8 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 169.254.0.0/16 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 172.16.0.0/12 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 192.168.0.0/16 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 224.0.0.0/4 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 240.0.0.0/4 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d $ip1.$ip2.0.0/16 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d $ss_basic_server -j RETURN
+
+
+# IP白名单控制（不走ss）
+if [ ! -z $ss_redchn_wan_white_ip ];then
+for wan_white_ip in $wanwhitelist
+	do 
+		iptables -t mangle -A SHADOWSOCKS2 -d $wan_white_ip -j RETURN
+	done
+fi
+
+# 域名白名单控制（不走ss）
+if [ ! -z $ss_redchn_wan_white_domain ];then
+	iptables -t mangle -A SHADOWSOCKS2 -p tcp -m set $MATCH_SET white_domain dst -j RETURN 
+fi
+
+# IP黑名单控制（走ss）
+if [ ! -z $ss_redchn_wan_blacklist ];then
+for wan_black_ip in $wanblacklist
+	do 
+		iptables -t mangle -A SHADOWSOCKS2 -d $wan_black_ip -p tcp -j TPROXY --on-port 1088 --tproxy-mark 0x01/0x01
+	done
+fi
+
+# 域名黑名单控制（走ss）
+if [ ! -z $ss_redchn_wan_black_domain ];then
+	iptables -t mangle -A SHADOWSOCKS2 -p tcp -m set $MATCH_SET black_domain dst -j TPROXY --on-port 1088 --tproxy-mark 0x01/0x01
+fi
+
+# lan blacklist
+if [ "$ss_basic_lan_control" == "1" ];then
+	if [ ! -z $ss_basic_black_lan ];then
+		for balck_ip in $black
+		do
+			iptables -t mangle -A SHADOWSOCKS2 -p tcp -s $balck_ip -j RETURN
+		done
+	fi
+elif [ "$ss_basic_lan_control" == "2" ];then
+	if [ ! -z $ss_basic_white_lan ];then
+		for white_ip in $white
+		do
+			iptables -t mangle -A SHADOWSOCKS2 -p tcp -s $white_ip -m set ! $MATCH_SET chnroute dst -j  TPROXY --on-port 1089 --tproxy-mark 0x01/0x00
+		done
+	fi
+fi
+
+iptables -t mangle -A SHADOWSOCKS2 -p tcp -m set ! $MATCH_SET chnroute dst -j  TPROXY --on-port 1089 --tproxy-mark 0x01/0x01
+iptables -t mangle -A SHADOWSOCKS2 -p udp -m set ! $MATCH_SET chnroute dst -j  TPROXY --on-port 1089 --tproxy-mark 0x01/0x01
+
+# Apply the rules
+iptables -t mangle -A PREROUTING -p tcp -j SHADOWSOCKS2
+iptables -t mangle -A PREROUTING -p udp -j SHADOWSOCKS2

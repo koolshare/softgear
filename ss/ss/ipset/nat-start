@@ -1,0 +1,94 @@
+#!/bin/sh
+
+eval `dbus export ss`
+black=$(echo $ss_basic_black_lan | sed "s/,/ /g")
+white=$(echo $ss_basic_white_lan | sed "s/,/ /g")
+lan_ipaddr=$(nvram get lan_ipaddr)
+server_ip=`resolvip $ss_basic_server`
+wanwhitedomain=$(echo $ss_ipset_white_domain_web | sed 's/,/\n/g')
+ip1=$(nvram get wan_ipaddr | cut -d"." -f1)
+ip2=$(nvram get wan_ipaddr | cut -d"." -f2)
+MODULES="nf_tproxy_core xt_TPROXY xt_socket"
+OS=$(uname -r)
+
+# Different routers got different iptables syntax
+case $(uname -m) in
+  armv7l)
+    MATCH_SET='--match-set'
+    ;;
+  mips)
+    MATCH_SET='--set'
+    ;;
+esac
+
+# load Kernel Modules
+echo $(date): load TPROXY modules...
+checkmoduleisloaded(){
+	if lsmod | grep $MODULE > /dev/null; then
+	       	return 0; 
+	else 
+		return 1; 
+	fi;
+}
+
+for MODULE in $MODULES; do
+	if ! checkmoduleisloaded; then
+		insmod /lib/modules/${OS}/kernel/net/netfilter/${MODULE}.ko
+	fi
+done
+
+modules_loaded=0
+
+for MODULE in $MODULES; do
+	if checkmoduleisloaded; then
+		modules_loaded=$(( i++ )); 
+	fi
+done
+
+if [ $modules_loaded -ne 2 ]; then
+	echo "One or more modules are missing, only $(( modules_loaded+1 )) are loaded. Can't start.";
+	exit 1;
+fi
+echo $(date): done
+echo $(date): 
+
+iptables -t mangle -D PREROUTING -p tcp -j SHADOWSOCKS2 >/dev/null 2>&1
+iptables -t mangle -F SHADOWSOCKS2 >/dev/null 2>&1
+iptables -t mangle -X SHADOWSOCKS2 >/dev/null 2>&1
+
+ipset -F router >/dev/null 2>&1
+ipset -F gfwlist >/dev/null 2>&1
+ipset -F white_domain >/dev/null 2>&1
+ipset -X router >/dev/null 2>&1
+ipset -X gfwlist >/dev/null 2>&1
+ipset -X white_domain >/dev/null 2>&1
+
+# Create new set
+ipset -N router iphash
+ipset -N gfwlist iphash
+ipset -N white_domain iphash
+
+# create ip rules
+ip rule add fwmark 1 lookup 100
+ip route add local 0.0.0.0/0 dev lo table 100
+
+# creat mangle chain
+iptables -t mangle -N SHADOWSOCKS2
+
+# return these ip
+iptables -t mangle -A SHADOWSOCKS2 -d 0.0.0.0/8 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 10.0.0.0/8 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 127.0.0.0/8 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 169.254.0.0/16 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 172.16.0.0/12 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 192.168.0.0/16 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 224.0.0.0/4 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d 240.0.0.0/4 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d $ip1.$ip2.0.0/16 -j RETURN
+iptables -t mangle -A SHADOWSOCKS2 -d $ss_basic_server -j RETURN
+
+# Apply the rules
+iptables -t mangle -A PREROUTING -p tcp -j SHADOWSOCKS2
+
+iptables -t mangle -A SHADOWSOCKS2 -p tcp -m set $MATCH_SET gfwlist dst -j TPROXY --on-port 3333 --tproxy-mark 0x01/0x01
+
