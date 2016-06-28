@@ -47,7 +47,7 @@
 
   function form2Data() {
 	var data = {};
-	var ss = ["mode", "server", "port", "password", "method", "onetime_auth"];
+	var ss = ["mode", "server", "port", "password", "method", "onetime_auth", "rss_protocol", "rss_obfs"];
 	for(var i = 0; i < ss.length; i++) {
 		data["ss_basic_"+ss[i]] = $("#ss_basic_"+ss[i]).val();
 	}
@@ -78,15 +78,17 @@
   }
 
     function data2Form(obj) {
-	var ss = ["mode", "server", "port", "password", "method", "onetime_auth"];
+	var ss = ["mode", "server", "port", "password", "method", "onetime_auth", "rss_protocol", "rss_obfs"];
 	for (var i = 0; i < ss.length; i++) {
 		$('#ss_basic_'+ss[i]).val(obj["ss_basic_"+ss[i]]);
 	}
 
 	if(obj["ss_basic_use_rss"] == "0") {
-		$("#ss_basic_use_rss").prop("checked", false);
+		$("#ss_basic_use_rss").removeAttr('checked');
+		//$("#ss_basic_use_rss").prop("checked", false);
 	} else {
-		$("#ss_basic_use_rss").prop("checked", true);
+		//$("#ss_basic_use_rss").prop("checked", true);
+		$("#ss_basic_use_rss").attr('checked','checked');
 	}
 
 	if(obj["ss_basic_mode"] == "1") {
@@ -127,7 +129,7 @@ function dnsChanged() {
 		if(data.result == "postend") {
 			$("#divInfo").html("配置成功！等待刷新");
 		}
-		setTimeout("window.location.reload()", 3000);
+		setTimeout("window.location.reload()", 2000);
 	};
 	setTimeout("window.location.reload()", 12000);
 
@@ -219,7 +221,7 @@ function update_visibility() {
 			<option value="6">【6】 kcptun模式</option>
 		</select>
 
-		<input type="checkbox" id="ss_basic_use_rss" onclick="update_visibility();" />
+		<input type="checkbox" id="ss_basic_use_rss" name="ss_basic_use_rss" onclick="update_visibility();" />
 	</td>
 </tr>
 <tr>
