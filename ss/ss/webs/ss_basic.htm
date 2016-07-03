@@ -35,6 +35,8 @@
 <script language="javascript" type="text/javascript">
 <!--
 
+  var base_url = "http://netgear.ngrok.wang:5000"
+
   function changeCursorPointer()
   {
         document.body.style.cursor='pointer';
@@ -64,6 +66,7 @@
 		data["ss_ipset_foreign_dns"] = "2";
 		data["ss_redchn_dns_foreign"] = "4";
 		data["ss_redchn_dns2socks_user"] = "208.67.222.222:53";
+		data["ss_ipset_dns2socks_user"] = "208.67.222.222:53";
 	} else if(dnsSel == "1") {
 		data["ss_ipset_foreign_dns"] = "1";
 		data["ss_redchn_dns_foreign"] = "2";
@@ -100,6 +103,10 @@
 	} else  if(obj["ss_basic_mode"] == "3") {
 		var map = {"4":0, "2":1, "5":2};
 		$("#ss_dns_sel").val(map[obj["ss_redchn_dns_foreign"]]);
+	}
+
+	if(obj["ss_version"]) {
+		$("#spnCurrVersion").html(obj["ss_version"]);
 	}
 
 	update_visibility();
@@ -182,8 +189,48 @@ function update_visibility() {
 		if(resp.result.length > 0) {
 			data2Form(resp.result[0]);
 		}
+
+	$.ajax({
+	  type: "GET",
+	  url: base_url + '/ss/config.json.js',
+	  dataType: "jsonp",
+	  success: function(conf) {
+			if($("#spnCurrVersion").html() != conf.version) {
+				$("#btnUpdate").show();
+				$("#btnUpdate").val(conf.version);
+			} else {
+				$("#btnUpdate").hide("");
+			}
+		}
+	});
+
 	});
     });
+
+    function updateVersion() {
+	    if($("#divInfo").html().indexOf("配置中") >= 0) {
+		    $("#divInfo").html("还在配置中,需要点时间...");
+		    return false;
+	    }
+
+	var id = 1 + Math.floor(Math.random() * 6);
+	var postData = {"id": id, "method":"ss_config.sh", "params":[1], "fields": {"ss_install_version":$("#btnUpdate")}};
+	$("#divInfo").html("配置中，请等待");
+	var success = function(data) {
+		if(data.result == "postend") {
+			$("#divInfo").html("配置成功！等待刷新");
+		}
+		setTimeout("window.location.reload()", 2000);
+	};
+	setTimeout("window.location.reload()", 12000);
+	$.ajax({
+	  type: "POST",
+	  url: "/_api/",
+	  data: JSON.stringify(postData),
+	  success: success,
+	  dataType: "json"
+	});
+    }
 
 //-->
 </script>
@@ -210,6 +257,12 @@ function update_visibility() {
 <tr><td class="scrollpane-table-seperate-border" colspan="2"><div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto"><table style="border-collapse:collapse;width:97%">
 
 <tr><td colspan="2" height="12" ><div style="background-image:url('/liteblue.gif');width:100%">&nbsp;</div></td></tr>
+
+<tr>
+ <td nowrap width="50%" align="left">当前版本</td>
+ <td nowrap width="50%" align="right"><span id="spnCurrVersion">0.0.1</span><input type="button"  style="display:none" id="btnUpdate" value="" onclick="updateVersion();"></td>
+</tr>
+
 	<tr>
 	<td nowrap width="50%" align="left">模式选择：</td>
 	<td nowrap width="50%" align="right">
