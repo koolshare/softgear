@@ -208,7 +208,7 @@ if [ "5" == "$ss_redchn_dns_foreign"  ]; then
 	echo $(date): Start Pcap_DNSProxy..
 	sed -i '/^Listen Port/c Listen Port = 1053' /koolshare/ss/dns/Config.conf
 	sed -i '/^Local Main/c Local Main = 0' /koolshare/ss/dns/Config.conf
-	perpctl A pcapdns
+	perp-restart pcapdns
 	echo $(date): done
 	echo $(date):
 fi
@@ -238,7 +238,7 @@ kill `pidof dnsmasq` || true
 sleep 1
 
 echo $(date): Bring up dnsmasq service
-dnsmasq -h -n -c 0 -N -i br0 
+dnsmasq -h -n -c 0 -N -i br0 -C /koolshare/configs/dnsmasq.conf
 echo $(date): done
 echo $(date):
 

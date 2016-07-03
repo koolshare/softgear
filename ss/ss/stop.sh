@@ -120,7 +120,7 @@ fi
 
 if [ ! -z "$pcapdns" ]; then 
 	echo $(date): kill Pcap_DNSProxy...
-	perpctl X pcapdns
+	perpctl d pcapdns
 	sleep 1
 	kill $pcapdns || true
 	echo $(date): done
@@ -156,7 +156,7 @@ kill `pidof dnsmasq` || true
 sleep 1
 
 echo $(date): Bring up dnsmasq service
-dnsmasq -h -n -c 0 -N -i br0 -r /tmp/resolv.conf -u r -a 0.0.0.0
+dnsmasq -h -n -c 0 -N -i br0 -r /tmp/resolv.conf -C /koolshare/configs/dnsmasq.conf
 echo $(date): done
 echo $(date):
 fi
