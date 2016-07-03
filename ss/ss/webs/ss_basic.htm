@@ -86,12 +86,12 @@
 		$('#ss_basic_'+ss[i]).val(obj["ss_basic_"+ss[i]]);
 	}
 
-	if(obj["ss_basic_use_rss"] == "0") {
-		$("#ss_basic_use_rss").removeAttr('checked');
-		//$("#ss_basic_use_rss").prop("checked", false);
-	} else {
+	if(obj["ss_basic_use_rss"] == "1") {
 		//$("#ss_basic_use_rss").prop("checked", true);
 		$("#ss_basic_use_rss").attr('checked','checked');
+	} else {
+		$("#ss_basic_use_rss").removeAttr('checked');
+		//$("#ss_basic_use_rss").prop("checked", false);
 	}
 
 	if(obj["ss_basic_mode"] == "1") {
@@ -199,7 +199,7 @@ function update_visibility() {
 				$("#btnUpdate").show();
 				$("#btnUpdate").val(conf.version);
 			} else {
-				$("#btnUpdate").hide("");
+				$("#btnUpdate").hide();
 			}
 		}
 	});
@@ -214,7 +214,7 @@ function update_visibility() {
 	    }
 
 	var id = 1 + Math.floor(Math.random() * 6);
-	var postData = {"id": id, "method":"ss_config.sh", "params":[1], "fields": {"ss_install_version":$("#btnUpdate")}};
+	var postData = {"id": id, "method":"ss_config.sh", "params":[1], "fields": {"ss_install_version":$("#btnUpdate").val()}};
 	$("#divInfo").html("配置中，请等待");
 	var success = function(data) {
 		if(data.result == "postend") {
@@ -275,6 +275,7 @@ function update_visibility() {
 		</select>
 
 		<input type="checkbox" id="ss_basic_use_rss" name="ss_basic_use_rss" onclick="update_visibility();" />
+		<label for="ss_basic_use_rss">RSS</label>
 	</td>
 </tr>
 <tr>
