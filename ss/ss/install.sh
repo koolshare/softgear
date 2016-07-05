@@ -19,6 +19,10 @@ cp -rf /tmp/ss/game /koolshare/ss/
 cp -rf /tmp/ss/dns /koolshare/ss/
 cp -rf /tmp/ss/dw /koolshare/ss/
 
+if [ ! -f "/koolshare/init.d/S50ss.sh" ]; then
+cd /koolshare/init.d && ln -sf /koolshare/ss/ss_start.sh S50ss.sh
+fi
+
 cd /
 rm -f ss.tar.gz
 rm -rf /tmp/ss
