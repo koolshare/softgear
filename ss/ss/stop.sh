@@ -137,7 +137,7 @@ fi
 rm -rf /koolshare/configs/dnsmasq.d/gfwlist.conf
 
 if [ "$ss_basic_mode" == "0" -o "$ss_basic_mode" == "" ]; then
-rm -f /koolshare/init.d/S50ss.sh
+#rm -f /koolshare/init.d/S50ss.sh
 
 cat > /koolshare/configs/dnsmasq.conf <<EOF
 pid-file=/var/run/dnsmasq.pid
