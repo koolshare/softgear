@@ -199,6 +199,7 @@ function update_visibility() {
 		if($("#ss_basic_mtu").val() == "") {
 			$("#ss_basic_mtu").val("1350");
 		}
+		$("#divInfo").html("如果KCPTUN 运行不成功，请等待 2 分钟之后，再运行，则会成功");
 	} else {
 		for(var i = 0; i < trs1.length; i++) {
 			$("#" + trs1[i]).show();
