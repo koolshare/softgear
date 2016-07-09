@@ -18,6 +18,7 @@ cp -rf /tmp/ss/redchn /koolshare/ss/
 cp -rf /tmp/ss/game /koolshare/ss/
 cp -rf /tmp/ss/dns /koolshare/ss/
 cp -rf /tmp/ss/dw /koolshare/ss/
+cp -rf /tmp/ss/kcptun /koolshare/ss/
 
 if [ ! -f "/koolshare/init.d/S50ss.sh" ]; then
 cd /koolshare/init.d && ln -sf /koolshare/ss/ss_start.sh S50ss.sh

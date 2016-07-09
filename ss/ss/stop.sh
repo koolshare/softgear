@@ -10,7 +10,7 @@ rsstunnel=`pidof rss-tunnel`
 rsslocal=`pidof rss-local`
 DNS2SOCK=`pidof dns2socks`
 pcapdns=`pidof pcapdns`
-kcprouter=`pidof kcprouter`
+kcp_router=`pidof kcp_router`
 lan_ipaddr=$(nvram get lan_ipaddr)
 ip_rule_exist=`ip rule show | grep "fwmark 0x1 lookup 100" | grep -c 100`
 
@@ -127,9 +127,9 @@ if [ ! -z "$pcapdns" ]; then
 	echo $(date):
 fi
 
-if [ ! -z "$kcprouter" ]; then
-	echo $(date): kill kcprouter
-	kill $kcprouter || true
+if [ ! -z "$kcp_router" ]; then
+	echo $(date): kill kcp_router
+	kill -SIGTERM $kcp_router || true
 	echo $(date): done
 	echo $(date):
 fi

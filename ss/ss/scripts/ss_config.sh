@@ -4,7 +4,7 @@ source /koolshare/scripts/base.sh
 ss_basic_mode=`dbus get ss_basic_mode`
 LOG=/tmp/info/ss.log
 
-if [ "$2" == "1" ]; then
+if [ "$2" = "1" ]; then
 #udpate command
 cd /tmp/
 rm -f ss.tar.gz
@@ -24,6 +24,8 @@ elif [ "$ss_basic_mode" = "2" ]; then
 /koolshare/ss/redchn/start.sh >> $LOG
 elif [ "$ss_basic_mode" = "3" ]; then
 /koolshare/ss/game/start.sh >> $LOG
+elif [ "$ss_basic_mode" = "6" ]; then
+/koolshare/ss/kcptun/start.sh >> $LOG
 fi
 
 http_response "postend"

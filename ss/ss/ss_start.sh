@@ -13,6 +13,8 @@ start)
 		/koolshare/ss/redchn/start.sh >> $LOG
 	elif [ "$ss_basic_mode" = "3" ]; then
 		/koolshare/ss/game/start.sh >> $LOG
+	elif [ "$ss_basic_mode" = "6" ]; then
+		/koolshare/ss/kcptun/start.sh >> $LOG
 	fi
 
 	;;
