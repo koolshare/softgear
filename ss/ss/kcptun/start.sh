@@ -106,10 +106,8 @@ cat > /koolshare/ss/kcptun/ss.json <<EOF
     "server":"$server_ip",
     "server_port":$ss_basic_port,
     "redir_port": 1089,
-    "socks5_port":9999,
+    "socks5_port":23456,
     "password":"$ss_basic_password",
-    "dns_port": 1053,
-    "dns_server": "$ss_redchn_dns2socks_user",
     "mode":"fast2",
     "sndwnd":$ss_basic_sndwnd,
     "rcvwnd":$ss_basic_rcvwnd,
@@ -124,6 +122,11 @@ EOF
 kill kcp_router || true
 sleep 1
 start-stop-daemon -m -p /var/run/kcp_client.pid -S  -x /koolshare/bin/kcp_router -b -- -c /koolshare/ss/kcptun/ss.json
+
+echo $(date): Starting DNS2SOCKS..
+dns2socks 127.0.0.1:23456 "$ss_redchn_dns2socks_user" 127.0.0.1:1053 > /dev/null 2>&1 &
+echo $(date): done
+echo $(date):
 
 echo $(date): done
 echo $(date):
