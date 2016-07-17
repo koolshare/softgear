@@ -1,0 +1,206 @@
+html,
+body,
+div,
+ul,
+ol,
+li,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+textarea {
+  margin: 0;
+  padding: 0;
+  font-family: "微软雅黑";
+  font-size: 12px;
+  text-decoration: none;
+  color: #7E7E7E;
+}
+body .verticalMiddle {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+body .alignCenter {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+body .absoluteCenter {
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: tranlsate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+html,
+body {
+  background-color: #21333E;
+  height: 100%;
+}
+#mainSoftwareCenter {
+  position: relative;
+  width: 100%;
+  min-height: 960px;
+  padding: 0 2% 30px;
+  box-sizing: border-box;
+  color: #E8FFFF;
+  margin: 30px auto 30px;
+  background-color: #4D595D;
+}
+#mainSoftwareCenter .headTab {
+  position: absolute;
+  background-color: #4D595D;
+  color: #E8FFFF;
+  top: -50px;
+  left: -0.05%;
+  width: 10%;
+  height: 50px;
+  font-size: 1.3rem;
+  border-top-left-radius: 15%;
+  border-top-right-radius: 15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: left;
+}
+#mainSoftwareCenter .title {
+  font-size: 1.5rem;
+  height: 80px;
+  line-height: 80px;
+  color: #E8FFFF;
+  border-bottom: 2px groove #657780;
+  -moz-border-bottom: 2px groove #657780;
+}
+#mainSoftwareCenter .welcome {
+  margin-top: 10px;
+  color: #E8FFFF;
+}
+#mainSoftwareCenter .welcome ul {
+  background-color: #444F53;
+  padding: 10px 50px 50px;
+  border-radius: 10px;
+  font-style: italic;
+}
+#mainSoftwareCenter .welcome .firstLi {
+  font-size: 1.8rem;
+  color: #E8FFFF;
+  line-height: 70px;
+}
+#mainSoftwareCenter .welcome li {
+  color: #E8FFFF;
+  line-height: 30px;
+  list-style: none;
+}
+#mainSoftwareCenter .welcome li i {
+  font-size: 30px;
+  margin-right: 10px;
+}
+#mainSoftwareCenter .welcome li a {
+  color: #FFCC0A;
+}
+#mainSoftwareCenter .footTab {
+  margin-top: 20px;
+}
+#mainSoftwareCenter .footTab .hasInstalled {
+  height: 40px;
+  width: 100px;
+  line-height: 40px;
+  color: #E8FFFF;
+  text-align: center;
+  display: inline-block;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: #444F53;
+}
+#mainSoftwareCenter .footTab .noInstalled {
+  height: 40px;
+  width: 100px;
+  color: #E8FFFF;
+  text-align: center;
+  line-height: 40px;
+  margin-left: 3px;
+  display: inline-block;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: #444444;
+}
+#mainSoftwareCenter .tabContent {
+  margin-top: 5px;
+  background-color: #444F53;
+  padding: 0 10px 40px;
+}
+#mainSoftwareCenter .tabContent .app {
+  position: relative;
+  display: inline-block;
+  margin-right: 20px;
+  margin-top: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+}
+#mainSoftwareCenter .tabContent .app img {
+  top: 10px;
+}
+#mainSoftwareCenter .tabContent .app span {
+  top: 85px;
+  width: 100px;
+  text-align: center;
+  color: #FFFFFF;
+}
+#mainSoftwareCenter .tabContent .app:hover .appDesc {
+  visibility: visible;
+}
+#mainSoftwareCenter .tabContent .app .appDesc {
+  opacity: 0.8;
+  background-color: black;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  visibility: hidden;
+}
+#mainSoftwareCenter .tabContent .app .appDesc a {
+  color: #FFFFFF;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  text-align: center;
+  height: 80px;
+  width: 100px;
+  box-sizing: border-box;
+  padding-top: 10px;
+  text-indent: 1000;
+}
+#mainSoftwareCenter .tabContent .app .appDesc button {
+  width: 100px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.KoolshareBottom {
+  margin-top: 30px;
+  width: 230px;
+  height: 100px;
+  background: url(../imgs/koolshare.png) -2px 3px no-repeat;
+  text-align: left;
+  padding-left: 120px;
+  float: right;
+  color: white;
+}
+.KoolshareBottom a {
+  line-height: 20px;
+}
+.KoolshareBottom a i {
+  color: #FC0;
+  font-style: normal;
+  text-decoration: underline;
+}
+.KoolshareBottom i.webAuthor {
+  color: #FFCC00;
+}
+/*# sourceMappingURL=Main_Soft_center.css.map */
