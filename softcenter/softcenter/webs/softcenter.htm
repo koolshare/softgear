@@ -1,0 +1,325 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <META name="description" content="R8500">
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <META http-equiv="Content-Style-Type" content="text/css">
+    <META http-equiv="Pragma" content="no-cache">
+    <META HTTP-equiv="Cache-Control" content="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="Mon, 06 Jan 1990 00:00:01 GMT">
+
+    <title>NETGEAR Router R8500</title>
+    <link rel="stylesheet" href="/css/table_noh.css">
+    <link rel="stylesheet" href="/css/scrollbar.css">
+    <link rel="stylesheet" href="/css/button.css">
+
+    <script src="/jquery.js"></script>
+    <script src="/script/jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="/script/jquery.jscrollpane.min.js"></script>
+
+    <script src="/script/script.js"></script>
+    <link rel="stylesheet" href="/form.css">
+    <STYLE TYPE="text/javascript">
+        classes.num.all.fontFamily
+
+        =
+        "Courier"
+        ;
+        classes.num.all.fontSize
+
+        =
+        "10pt"
+        ;
+    </style>
+    <script language="javascript" type="text/javascript" src="/func.js"></script>
+    <script language="javascript" type="text/javascript" src="/msg.js"></script>
+    <script language="javascript" type="text/javascript" src="/utility.js"></script>
+    <script language="javascript" type="text/javascript" src="/browser.js"></script>
+    <script language="javascript" type="text/javascript" src="/md5.js"></script>
+    <script language="javascript" type="text/javascript" src="/wep.js"></script>
+
+    <script language="javascript" type="text/javascript">
+        <!--
+
+        String.prototype.format = String.prototype.f = function () {
+            var s = this,
+                    i = arguments.length;
+            while (i--) {
+                s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+            }
+            return s;
+        };
+        function formatString(s, args) {
+            i = args.length;
+            while (i--) {
+                s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), args[i]);
+            }
+            return s;
+        }
+        String.prototype.endsWith = function (suffix) {
+            return (this.substr(this.length - suffix.length) === suffix);
+        }
+        String.prototype.startsWith = function (prefix) {
+            return (this.substr(0, prefix.length) === prefix);
+        }
+        String.prototype.capitalizeFirstLetter = function () {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        }
+
+        var base_url = "http://netgear.ngrok.wang:5000"
+
+        function changeCursorPointer() {
+            document.body.style.cursor = 'pointer';
+        }
+
+        function changeCursorDefault() {
+            document.body.style.cursor = 'default';
+        }
+
+        function buttonClick(btn, value) {
+            if (value == "Cancel") {
+                window.location.reload();
+                return false;
+            }
+        }
+
+        var currState = {"installing": false, "lastChangeTick": 0, "lastStatus": "-1", "module": ""};
+        var TIMEOUT_SECONDS = 18;
+        var softInfo = null;
+        $(document).ready(function () {
+        });
+
+        function appPostScript(moduleInfo, script) {
+            if (currState.installing) {
+                console.log("current is in installing state");
+                return;
+            }
+            //Current page must has prefix of "Module_"
+            var data = {
+                "SystemCmd": script,
+                "current_page": "Module_koolnet.asp",
+                "action_mode": " Refresh ",
+                "action_script": ""
+            };
+
+            var applyUrl = "applydb.cgi?p=softcenter_";
+
+            //currState.name = moduleInfo.name;
+            //TODO auto choose for home_url
+            data["softcenter_home_url"] = "http://koolshare.ngrok.wang:5000";
+
+            data["softcenter_installing_todo"] = moduleInfo.name;
+            if (script == "ks_app_install.sh") {
+                data["softcenter_installing_tar_url"] = moduleInfo.tar_url;
+                data["softcenter_installing_md5"] = moduleInfo.md5;
+                data["softcenter_installing_version"] = moduleInfo.version;
+
+                //Update title for this module
+                data[moduleInfo.name + "_title"] = moduleInfo.title;
+                applyUrl = applyUrl + "," + moduleInfo.name;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: applyUrl,
+                dataType: "text",
+                data: data,
+                success: function () {
+                    var d = new Date();
+                    //持续更新
+                    currState.lastChangeTick = d / 1000 + TIMEOUT_SECONDS;
+                    currState.installing = true;
+                    showInstallStatus(true);
+                },
+                error: function () {
+                    currState.installing = false;
+                    console.log("install error");
+                }
+            });
+        }
+
+        function appInstallModule(moduleInfo) {
+            appPostScript(moduleInfo, "ks_app_install.sh");
+        }
+        
+        function appUninstallModule(moduleInfo) {
+
+            if (!window.confirm('确定卸载吗')) {
+                return;
+            }
+            appPostScript(moduleInfo, "ks_app_remove.sh");
+        }
+
+        function initInstallStatus() {
+            var o = db_softcenter_;
+            var base = "softcenter_installing_";
+            if (o[base + "status"]) {
+                //状态不是0/1/7,则当前正处于安装状态,实时更新安装信息
+                if ((o[base + "status"] != "0") && (o[base + "status"] != "1") && (o[base + "status"] != "7")) {
+                    var d = new Date();
+                    currState.lastChangeTick = d / 1000 + TIMEOUT_SECONDS;
+                    currState.lastStatus = o[base + "status"];
+                    currState.installing = true;
+                    //currState.name = o[base+"module"];
+                    showInstallStatus(true);
+                }
+            }
+        }
+
+        function showInstallStatus(isInit) {
+            $.ajax({
+                type: "get",
+                url: "dbconf?p=softcenter_installing_",
+                dataType: "script",
+                success: function (xhr) {
+                    var o = db_softcenter_installing_;
+                    var base = "softcenter_installing_";
+                    console.log("status: " + o[base + "status"]);
+                    if (isInit) {
+                        currState.lastStatus = o[base + "status"];
+                    }
+                    var d = new Date();
+                    var curr = d.getTime() / 1000;
+                    curr_module = checkField(o, "softcenter_installing_module", "");
+                    if (o[base + "status"] != currState.lastStatus) {
+                        currState.lastStatus = o[base + "status"];
+                        showInstallInfo(curr_module, currState.lastStatus);
+
+                        // Install ok now
+                        if (currState.lastStatus == "1" || currState.lastStatus == "7") {
+                            currState.installing = false;
+                            setTimeout("window.location.reload()", 1000);
+                            return;
+                        } else if (currState.lastStatus == "0") {
+                            currState.installing = false;
+                        }
+                    }
+                    if (currState.lastChangeTick > curr) {
+                        setTimeout("showInstallStatus()", 1500);
+                    } else {
+                        currState.installing = false;
+                        $("#appInstallInfo").html("等待超时,可尝试手动刷新");
+                        //showInstallInfo("", currState.lastStatus);
+                    }
+                }
+            })
+        }
+
+        function showInstallInfo(module, scode) {
+            var code = parseInt(scode);
+            var s = module.capitalizeFirstLetter();
+            var infos = [
+                "操作失败",
+                "已安装",
+                "将被安装到jffs分区...",
+                "正在下载中...请耐心等待...",
+                "正在安装中...",
+                "安装成功！请5秒后刷新本页面！...",
+                "卸载中......",
+                "卸载成功！",
+                "没有检测到在线版本号！",
+                "正在下载更新......",
+                "正在安装更新...",
+                "安装更新成功，5秒后刷新本页！ ",
+                "下载文件校验不一致！",
+                "然而并没有更新！",
+                "正在检查是否有更新~",
+                "检测更新错误！"
+            ];
+            document.getElementById("install_status").style.display = "";
+            $("#appInstallInfo").html(s + infos[code]);
+        }
+        //-->
+    </script>
+</head>
+
+<body onload="change_size();" class="page-body" onResize="change_size();">
+<img class="cover-image" src="/img/cover-image_noh.gif">
+<img class="body-image" src="/img/subhead2-background_noh.jpg">
+
+<div id="full-page-container">
+
+
+    <form id="target" method="POST">
+        <img class="subtop-image" src="/img/subhead2-top_noh.gif">
+
+        <div class="subhead2">Softcenter</div>
+
+        <table border="0" style="height:370px" class="subhead2-table">
+
+            <tr>
+                <td class="scrollpane-table-seperate-border" colspan="2">
+                    <div class="scroll-pane" style="height:365px;width:620px;overflow:auto;scrolling:auto">
+
+                        <table style="border-collapse:collapse;width:97%">
+
+                            <tr>
+                                <td colspan="2" height="12">
+                                    <div style="background-image:url('/liteblue.gif');width:100%">&nbsp;</div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td nowrap width="50%" align="left">当前版本</td>
+                                <td nowrap width="50%" align="right"><span id="spnCurrVersion">0.0.1</span><input
+                                        type="button" style="display:none" id="btnUpdate" value=""
+                                        onclick="updateVersion();"></td>
+                            </tr>
+
+                            <tr>
+                                <td nowrap width="50%" align="left">模式选择：</td>
+                                <td nowrap width="50%" align="right">
+                                    <select id="ss_basic_mode" name="ss_basic_mode"
+                                            style="appearance: menulist;width:164px;" onchange="update_visibility();">
+                                        <option value="0">【0】 关闭</option>
+                                        <option value="1">【1】 GFWlist模式</option>
+                                        <option value="2">【2】 大陆白名单模式</option>
+                                        <option value="3">【3】 游戏模式</option>
+                                        <option value="6">【6】 kcptun模式</option>
+                                    </select>
+
+                                    <input type="checkbox" id="ss_basic_use_rss" name="ss_basic_use_rss"
+                                           onclick="update_visibility();"/>
+                                    <label for="ss_basic_use_rss">RSS</label>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" align="center">
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+                </td>
+            </tr>
+            <tr valign="middle" align="center">
+                <td class="table-seperate-border" colspan="2" style="padding-left:0px">
+                    <div class="help-frame-div"></div>
+                </td>
+            </tr>
+        </table>
+        <img class="subfooter-image" src="/img/subhead2-bottom.gif">
+
+        <div class="subhead2-bottom">
+            <span style="float:left;padding-left:10px;padding-top:5px"><img src="/img/help-icon.gif"
+                                                                            onmouseover="changeCursorPointer();"
+                                                                            onmouseout="changeCursorDefault();"></span>
+            <span class="subhead2-text" style="float:left;padding-left:3px;" onmouseover="changeCursorPointer();"
+                  onmouseout="changeCursorDefault();"> Help Center </span>
+    <span class="button-help-arrow">
+      <img src="/img/helparrowdown-icon.gif" id="help-button" onmouseover="changeCursorPointer();"
+           onmouseout="changeCursorDefault();"></span>
+            <span class="subhead2-text" style="text-decoration:underline;float:right;padding-right:10px"
+                  onmouseover="changeCursorPointer();"
+                  onmouseout="changeCursorDefault();"> Show/Hide Help Center </span>
+        </div>
+
+
+        <a name="helpframe-anchor"></a>
+    </form>
+
+</div>
+</body>
+</html>
