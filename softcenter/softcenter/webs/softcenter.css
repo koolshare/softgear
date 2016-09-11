@@ -18,7 +18,7 @@ textarea {
   font-family: "微软雅黑";
   font-size: 12px;
   text-decoration: none;
-  color: #7E7E7E;
+  /* color: #ffffff; */
 }
 body .verticalMiddle {
   position: absolute;
@@ -40,7 +40,6 @@ body .absoluteCenter {
 }
 html,
 body {
-  background-color: #21333E;
   height: 100%;
 }
 #mainSoftwareCenter {
@@ -49,9 +48,9 @@ body {
   min-height: 960px;
   padding: 0 2% 30px;
   box-sizing: border-box;
-  color: #E8FFFF;
-  margin: 0px auto 30px;
-  background-color: #4D595D;
+  /* color: #E8FFFF; */
+  margin: 30px auto 30px;
+  background-color: #;
 }
 #mainSoftwareCenter .headTab {
   position: absolute;
@@ -74,12 +73,12 @@ body {
   height: 80px;
   line-height: 80px;
   color: #E8FFFF;
-  border-bottom: 2px groove #657780;
+  /* border-bottom: 2px groove #657780; */
   -moz-border-bottom: 2px groove #657780;
 }
 #mainSoftwareCenter .welcome {
   margin-top: 10px;
-  color: #E8FFFF;
+  /* color: #E8FFFF; */
 }
 #mainSoftwareCenter .welcome ul {
   background-color: #444F53;
@@ -109,14 +108,20 @@ body {
 }
 #mainSoftwareCenter .footTab .hasInstalled {
   height: 40px;
-  width: 100px;
+  width: 100%;
   line-height: 40px;
-  color: #E8FFFF;
-  text-align: center;
+  /* color: #E8FFFF; */
+  text-align: left;
   display: inline-block;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  background-color: #444F53;
+  /* background-color: #444F53; */
+  font-weight: 800;
+  font-size: 3em;
+  /* font-weight: bold; */
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  font-family: "微软雅黑";
 }
 #mainSoftwareCenter .footTab .noInstalled {
   height: 40px;
@@ -131,8 +136,8 @@ body {
   background-color: #444444;
 }
 #mainSoftwareCenter .tabContent {
-  margin-top: 2px;
-  background-color: #444F53;
+  margin-top: 5px;
+  /* background-color: #444F53; */
   padding: 0 10px 40px;
 }
 #mainSoftwareCenter .tabContent .app {
@@ -140,18 +145,43 @@ body {
   display: inline-block;
   margin-right: 20px;
   margin-top: 20px;
-  width: 100px;
-  height: 100px;
+  width: 250px;
+  height: 350px;
   border-radius: 5px;
+  background-color: #eee;
 }
 #mainSoftwareCenter .tabContent .app img {
-  top: 10px;
+  top: 18px;
+  width: 200px;
+  height: 200px;
+  background: #fff;
 }
-#mainSoftwareCenter .tabContent .app span {
-  top: 85px;
+#mainSoftwareCenter .tabContent .app span{
+  bottom: 73px;
   width: 100px;
   text-align: center;
-  color: #FFFFFF;
+  /* color: #FFFFFF; */
+  /* font-weight: 800; */
+}
+#mainSoftwareCenter .tabContent .app .app-name{
+   font-weight: 800; 
+   display: block;
+   width: 80%;
+   font-family: "微软雅黑";
+}
+#mainSoftwareCenter .tabContent .app span.app-version{
+  bottom: 40px;
+  width: 200px;
+  color: #a29e9e;
+}
+.app .app-star{
+	position: absolute;
+	bottom: 12px;
+	text-align: center;
+	margin: auto;
+	width: 100%;
+	color: #c5c1c1;
+	font-size: 0.6em;
 }
 #mainSoftwareCenter .tabContent .app:hover .appDesc {
   visibility: visible;
@@ -160,8 +190,8 @@ body {
   opacity: 0.8;
   background-color: black;
   position: absolute;
-  width: 100px;
-  height: 100px;
+  width: 250px;
+  height: 250px;
   visibility: hidden;
 }
 #mainSoftwareCenter .tabContent .app .appDesc a {
@@ -171,14 +201,14 @@ body {
   white-space: nowrap;
   display: inline-block;
   text-align: center;
-  height: 80px;
-  width: 100px;
+  height: 180px;
+  width: 250px;
   box-sizing: border-box;
   padding-top: 10px;
   text-indent: 1000;
 }
 #mainSoftwareCenter .tabContent .app .appDesc button {
-  width: 100px;
+  width: 250px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
@@ -186,7 +216,7 @@ body {
   margin-top: 30px;
   width: 230px;
   height: 100px;
-  background: url(../res/koolshare.png) -2px 3px no-repeat;
+  background: url(../imgs/koolshare.png) -2px 3px no-repeat;
   text-align: left;
   padding-left: 120px;
   float: right;
