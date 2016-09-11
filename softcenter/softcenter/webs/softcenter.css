@@ -49,7 +49,7 @@ body {
   padding: 0 2% 30px;
   box-sizing: border-box;
   /* color: #E8FFFF; */
-  margin: 30px auto 30px;
+  margin: 7px auto 30px;
   background-color: #;
 }
 #mainSoftwareCenter .headTab {
@@ -69,9 +69,9 @@ body {
   float: left;
 }
 #mainSoftwareCenter .title {
-  font-size: 1.5rem;
-  height: 80px;
-  line-height: 80px;
+  font-size: 2.5rem;
+  height: 30px;
+  line-height: 30px;
   color: #E8FFFF;
   /* border-bottom: 2px groove #657780; */
   -moz-border-bottom: 2px groove #657780;
@@ -117,7 +117,7 @@ body {
   border-top-right-radius: 8px;
   /* background-color: #444F53; */
   font-weight: 800;
-  font-size: 3em;
+  font-size: 1.5em;
   /* font-weight: bold; */
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
@@ -145,15 +145,15 @@ body {
   display: inline-block;
   margin-right: 20px;
   margin-top: 20px;
-  width: 250px;
-  height: 350px;
+  width: 150px;
+  height: 210px;
   border-radius: 5px;
   background-color: #eee;
 }
 #mainSoftwareCenter .tabContent .app img {
   top: 18px;
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 100px;
   background: #fff;
 }
 #mainSoftwareCenter .tabContent .app span{
@@ -171,7 +171,7 @@ body {
 }
 #mainSoftwareCenter .tabContent .app span.app-version{
   bottom: 40px;
-  width: 200px;
+  width: 150px;
   color: #a29e9e;
 }
 .app .app-star{
@@ -190,8 +190,8 @@ body {
   opacity: 0.8;
   background-color: black;
   position: absolute;
-  width: 250px;
-  height: 250px;
+  width: 150px;
+  height: 210px;
   visibility: hidden;
 }
 #mainSoftwareCenter .tabContent .app .appDesc a {
@@ -202,13 +202,13 @@ body {
   display: inline-block;
   text-align: center;
   height: 180px;
-  width: 250px;
+  width: 150px;
   box-sizing: border-box;
-  padding-top: 10px;
+  padding-top: 40px;
   text-indent: 1000;
 }
 #mainSoftwareCenter .tabContent .app .appDesc button {
-  width: 250px;
+  width: 150px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }

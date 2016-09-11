@@ -47,7 +47,7 @@
 
   function form2Data() {
 	var data = {};
-	var ss = ["mode", "server", "port", "password", "method", "onetime_auth", "rss_protocol", "rss_obfs", "sndwnd", "rcvwnd", "mtu"];
+	var ss = ["mode", "server", "port", "password", "method", "onetime_auth", "rss_protocol", "rss_obfs", "kcpcrypt", "kcpnocomp", "sndwnd", "rcvwnd", "mtu"];
 	for(var i = 0; i < ss.length; i++) {
 		data["ss_basic_"+ss[i]] = $("#ss_basic_"+ss[i]).val();
 	}
@@ -83,7 +83,7 @@
   }
 
     function data2Form(obj) {
-	var ss = ["mode", "server", "port", "password", "method", "onetime_auth", "rss_protocol", "rss_obfs", "sndwnd", "rcvwnd", "mtu"];
+	var ss = ["mode", "server", "port", "password", "method", "onetime_auth", "rss_protocol", "rss_obfs", "kcpcrypt", "kcpnocomp", "sndwnd", "rcvwnd", "mtu"];
 	for (var i = 0; i < ss.length; i++) {
 		if(obj["ss_basic_"+ss[i]]) {
 			$('#ss_basic_'+ss[i]).val(obj["ss_basic_"+ss[i]]);
@@ -179,7 +179,7 @@ function update_visibility() {
 	var use_rss = $("#ss_basic_use_rss").is(':checked');
 
 	var trs1 = ["tr_dns_sel", "tr_method", "tr_ota", "tr_protocol", "tr_obfs"];
-	var trs2 = ["tr_sndwnd", "tr_rcvwnd", "tr_mtu"];
+	var trs2 = ["tr_kcpcrypt", "tr_kcpnocomp", "tr_sndwnd", "tr_rcvwnd", "tr_mtu"];
 
 	if(ss_mode == "6") {
 		for(var i = 0; i < trs1.length; i++) {
@@ -196,6 +196,12 @@ function update_visibility() {
 		}
 		if($("#ss_basic_mtu").val() == "") {
 			$("#ss_basic_mtu").val("1350");
+		}
+		if($("ss_basic_kcpcrypt").val() == "") {
+			$("ss_basic_kcpcrypt").val("aes");
+		}
+		if($("ss_basic_kcpnocomp").val() == "") {
+			$("ss_basic_kcpnocomp").val("false");
 		}
 		$("#divInfo").html("如果KCPTUN 运行不成功，请等待 2 分钟之后，再运行，则会成功");
 	} else {
@@ -367,6 +373,36 @@ function update_visibility() {
 	<select id="ss_basic_onetime_auth" name="ss_basic_onetime_auth" style="appearance: menulist;width:164px;">
 		<option value="0">关闭【默认】</option>
 		<option value="1">打开</option>
+	</select>
+ </td>
+</tr>
+
+<tr id="tr_kcpcrypt">
+ <td nowrap width="50%" align="left">加密方式</td>
+ <td nowrap width="50%" align="right">
+	<select id="ss_basic_kcpcrypt" name="ss_basic_kcpcrypt" style="appearance: menulist;width:164px;">
+	<option class="content_input_fd" value="aes" selected="">aes</option>
+	<option class="content_input_fd" value="aes-128">aes-128</option>
+	<option class="content_input_fd" value="aes-192">aes-192</option>
+	<option class="content_input_fd" value="salsa20">salsa20</option>
+	<option class="content_input_fd" value="blowfish">blowfish</option>
+	<option class="content_input_fd" value="twofish">twofish</option>
+	<option class="content_input_fd" value="cast5">cast5</option>
+	<option class="content_input_fd" value="3des">3des</option>
+	<option class="content_input_fd" value="tea">tea</option>
+	<option class="content_input_fd" value="xtea">xtea</option>
+	<option class="content_input_fd" value="xor">xor</option>
+	<option class="content_input_fd" value="none">none</option>
+	</select>
+ </td>
+</tr>
+
+<tr id="tr_kcpnocomp">
+ <td nowrap width="50%" align="left">禁用压缩</td>
+ <td nowrap width="50%" align="right">
+	<select id="ss_basic_kcpnocomp" name="ss_basic_kcpnocomp" style="appearance: menulist;width:164px;">
+	<option class="content_input_fd" value="false" selected="">false</option>
+	<option class="content_input_fd" value="true">true</option>
 	</select>
  </td>
 </tr>

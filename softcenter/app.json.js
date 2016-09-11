@@ -12,7 +12,7 @@
         }
     ], 
     "home_url": "http://netgear.ngrok.wang:5000", 
-    "md5": "b6cf962008f37b87e8be5fb9ee5450f2", 
+    "md5": "d5940408f7746214c34af29b90bd06d6", 
     "tar_url": "softcenter/softcenter.tar.gz", 
     "version": "1.0.7"
 }

@@ -9,6 +9,7 @@ server_ip=`resolvip $ss_basic_server`
 wanwhitedomain=$(echo $ss_redchn_wan_white_domain | sed 's/,/\n/g')
 wanblackdomain=$(echo $ss_redchn_wan_black_domain | sed "s/,/\n/g")
 custom_dnsmasq=$(echo $ss_redchn_dnsmasq | sed "s/,/\n/g")
+export GOGC=60
 
 #--------------------------------------------------------------------------------------
 echo $(date): ------------------- Shadowsock CHN mode Starting-------------------------
@@ -109,6 +110,8 @@ cat > /koolshare/ss/kcptun/ss.json <<EOF
     "socks5_port":23456,
     "password":"$ss_basic_password",
     "mode":"fast2",
+    "crypt":"$ss_basic_kcpcrypt",
+    "nocomp":$ss_basic_kcpnocomp,
     "sndwnd":$ss_basic_sndwnd,
     "rcvwnd":$ss_basic_rcvwnd,
     "mtu":$ss_basic_mtu,
